@@ -22,10 +22,17 @@ router.get("/goods", async (req, res) => {
   }
 });
 
-router.get("/goods/:goodsId", (req, res) => {
+router.get("/goods/:goodsId", async (req, res) => {
   const { goodsId } = req.params;
-  const [detail] = goods.filter((goods) => goods.goodsId === Number(goodsId));
-  res.json({ detail });
+  const detail = await Goods.find({ goodsId: goodsId });
+
+  if (detail) {
+    return res.json({ success: true, data: detail });
+  } else {
+    return res
+      .status(404)
+      .json({ success: false, errorMessage: "데이터가 없습니다 ❌" });
+  }
 });
 
 router.post("/goods", async (req, res) => {
@@ -46,6 +53,19 @@ router.post("/goods", async (req, res) => {
   });
 
   res.json({ goods: createdGoods });
+});
+
+router.delete("/goods/:goodsId", async (req, res) => {
+  const { goodsId } = req.params;
+  const goods = await Goods.findOne({ goodsId });
+  if (goods) {
+    await Goods.deleteOne({ goodsId });
+    return res.json({ success: true, data: goods });
+  } else {
+    return res
+      .status(404)
+      .json({ success: false, errorMessage: "데이터가 없습니다 ❌" });
+  }
 });
 
 module.exports = router;
