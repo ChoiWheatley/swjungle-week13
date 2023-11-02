@@ -1,5 +1,6 @@
 const express = require("express");
 const Goods = require("../schemas/goods");
+const Cart = require("../schemas/cart");
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -66,6 +67,23 @@ router.delete("/goods/:goodsId", async (req, res) => {
       .status(404)
       .json({ success: false, errorMessage: "데이터가 없습니다 ❌" });
   }
+});
+
+router.post("/goods/:goodsId/cart", async (req, res) => {
+  const { goodsId } = req.params;
+  const { quantity } = req.body;
+
+  const cart = await Cart.find({ goodsId: goodsId });
+  if (cart.length) {
+    return res.json({
+      success: false,
+      errorMessage:
+        "이미 장바구니에 존재하는 상품입니다. 원한다면 UPDATE 메서드를 사용해 주세요",
+    });
+  }
+
+  await Cart.create({ goodsId: Number(goodsId), quantity: quantity });
+  res.json({ result: "success" });
 });
 
 module.exports = router;
