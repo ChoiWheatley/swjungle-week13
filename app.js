@@ -1,6 +1,5 @@
 const express = require("express");
 const goodsRouter = require("./routes/goods");
-const cartRouter = require("./routes/cart");
 const connect = require("./schemas");
 
 const app = express();
@@ -20,7 +19,7 @@ app.listen(port, () => {
  */
 
 app.use(express.json()); // use builtin JSON parser middleware
-app.use("/api", [goodsRouter, cartRouter]);
+app.use("/api", [goodsRouter]);
 app.use(express.static("static"));
 
 /**

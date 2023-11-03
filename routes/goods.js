@@ -23,7 +23,35 @@ router.get("/goods", async (req, res) => {
   }
 });
 
+router.param("goodsId", async (req, res, next, id) => {
+  const goods = await Goods.findOne({ goodsId: id });
+  if (!goods) {
+    return res.status(404).json({
+      success: false,
+      errorMessages: `그런 goodsId(${id})는 없는데요 선생님`,
+    });
+  }
+  req.goods = goods;
+  next();
+});
+
+router.get("/goods/carts", async (req, res) => {
+  // 장바구니 목록조회
+  const carts = await Cart.find({});
+  const goodsIds = carts.map((e) => e.goodsId);
+  const goods = await Goods.find({ goodsId: goodsIds });
+  const results = carts.map((e) => {
+    return {
+      quantity: e.quantity,
+      goods: goods.find((item) => item.goodsId === e.goodsId),
+    };
+  });
+
+  res.json({ success: true, carts: results });
+});
+
 router.get("/goods/:goodsId", async (req, res) => {
+  return res.json({ success: true, data: req.goods });
   const { goodsId } = req.params;
   const detail = await Goods.find({ goodsId: goodsId });
 
@@ -57,6 +85,8 @@ router.post("/goods", async (req, res) => {
 });
 
 router.delete("/goods/:goodsId", async (req, res) => {
+  await Goods.deleteOne({ goodsId: req.goods.goodsId });
+  return res.json({ success: true, data: req.goods });
   const { goodsId } = req.params;
   const goods = await Goods.findOne({ goodsId });
   if (goods) {
@@ -89,6 +119,13 @@ router.post("/goods/:goodsId/cart", async (req, res) => {
 router.put("/goods/:goodsId/cart", async (req, res) => {
   const { goodsId } = req.params;
   const { quantity } = req.body;
+
+  if (Number(quantity) < 1) {
+    return res.status(400).json({
+      success: false,
+      errorMessage: `아니, 님 (${quantity})개를 어떻게 삽니까? 😡`,
+    });
+  }
 
   const cart = await Cart.find({ goodsId: goodsId });
   if (cart.length === 0) {
