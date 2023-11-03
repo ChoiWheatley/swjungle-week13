@@ -78,12 +78,43 @@ router.post("/goods/:goodsId/cart", async (req, res) => {
     return res.json({
       success: false,
       errorMessage:
-        "이미 장바구니에 존재하는 상품입니다. 원한다면 UPDATE 메서드를 사용해 주세요",
+        "이미 장바구니에 존재하는 상품입니다. 원한다면 PUT 메서드를 사용해 주세요",
     });
   }
 
   await Cart.create({ goodsId: Number(goodsId), quantity: quantity });
   res.json({ result: "success" });
+});
+
+router.put("/goods/:goodsId/cart", async (req, res) => {
+  const { goodsId } = req.params;
+  const { quantity } = req.body;
+
+  const cart = await Cart.find({ goodsId: goodsId });
+  if (cart.length === 0) {
+    return res.json({
+      success: false,
+      errorMessage: `해당 상품(${goodsId})이 장바구니에 없습니다. POST 요청으로 장바구니에 상품을 추가해주세요.`,
+    });
+  }
+
+  await Cart.updateOne({ goodsId: goodsId }, { $set: { quantity } });
+
+  res.json({ sucess: true });
+});
+
+router.delete("/goods/:goodsId/cart", async (req, res) => {
+  const { goodsId } = req.params;
+  const cart = await Cart.findOne({ goodsId: goodsId });
+  if (!cart) {
+    return res.status(404).json({
+      success: false,
+      errorMessage: `해당 상품(${goodsId})이 장바구니에 없습니다.`,
+    });
+  }
+
+  await Cart.deleteOne({ goodsId: goodsId });
+  res.json({ success: true });
 });
 
 module.exports = router;
