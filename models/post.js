@@ -33,7 +33,7 @@ module.exports =
         },
         content: {
           allowNull: false,
-          type: DataTypes.STRING,
+          type: DataTypes.STRING, /// TODO - TEXT로 수정바람
         },
         author: {
           allowNull: false,
