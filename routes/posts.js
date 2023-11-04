@@ -54,4 +54,9 @@ router.get("/post/:postId", async (req, res) => {
   res.json({ data: req.post });
 });
 
+router.delete("/post/:postId", async (req, res) => {
+  await req.post.destroy();
+  res.sendStatus(200);
+});
+
 module.exports = router;
