@@ -2,7 +2,7 @@
   "development": {
     "username": "chltmdgus604",
     "password": "S}8P?5f743e.Bye",
-    "database": "express-database",
+    "database": "bulletin-board",
     "host": "express-database.c7awpqxy2ruh.ap-northeast-2.rds.amazonaws.com",
     "dialect": "mysql"
   },

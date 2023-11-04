@@ -1,5 +1,6 @@
 const express = require("express");
-const goodsRouter = require("./routes/goods");
+const commentsRouter = require("./routes/comments");
+const postsRouter = require("./routes/posts");
 const connect = require("./schemas");
 
 const app = express();
