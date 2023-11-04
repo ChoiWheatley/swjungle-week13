@@ -1,1 +1,2 @@
-SELECT * FROM `express-database`.`Posts` LIMIT 1000;
+USE `express-database`;
+desc Posts;
