@@ -1,10 +1,9 @@
 const express = require("express");
 const commentsRouter = require("./routes/comments");
 const postsRouter = require("./routes/posts");
-const connect = require("./schemas");
+const usersRouter = require("./routes/users");
 
 const app = express();
-connect();
 const port = 3000;
 
 app.get("/", (_req, res) => {
@@ -12,17 +11,13 @@ app.get("/", (_req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(port, "포트로 서버가 열렸어요! ♥️");
+  console.log("[*] ", port, "포트로 서버가 열렸어요! ️💗");
 });
 
-/**
- * SECTION - Middlewares
- */
+/// SECTION - Middlewares
 
 app.use(express.json()); // use builtin JSON parser middleware
-app.use("/api", [goodsRouter]);
+app.use("/api", [commentsRouter, postsRouter, usersRouter]);
 app.use(express.static("static"));
 
-/**
- * !SECTION - Middlewares
- */
+/// !SECTION - Middlewares
