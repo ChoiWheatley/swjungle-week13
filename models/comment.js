@@ -10,7 +10,10 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       /// TODO - author를 User에 대한 FK로 변경
-      this.belongsTo(models.Posts);
+      this.belongsTo(models.Posts, {
+        targetKey: "postId",
+        foreignKey: "PostId",
+      });
     }
   }
   Comments.init(

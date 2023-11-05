@@ -15,7 +15,10 @@ module.exports =
        * The `models/index` file will call this method automatically.
        */
       static associate(models) {
-        this.hasMany(models.Comments);
+        this.hasMany(models.Comments, {
+          sourceKey: "postId",
+          foreignKey: "PostId",
+        });
         /// TODO - author를 User에 대한 FK로 변경
       }
     }
