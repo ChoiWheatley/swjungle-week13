@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { Post } = require("../models");
+const { Posts } = require("../models");
 
 router.post("/post", async (req, res, next) => {
   const { title, content, author } = req.body;
 
   try {
-    const post = await Post.create({ title, content, author });
+    const post = await Posts.create({ title, content, author });
     res.status(201).json({ data: post });
   } catch (e) {
     console.log("💀", e);
@@ -17,7 +17,7 @@ router.post("/post", async (req, res, next) => {
 router.param("postId", async (req, res, next, id) => {
   try {
     const idnum = Number(id);
-    const post = await Post.findOne({
+    const post = await Posts.findOne({
       where: { postId: idnum },
     });
 
@@ -36,7 +36,7 @@ router.param("postId", async (req, res, next, id) => {
 });
 
 router.get("/post", async (req, res) => {
-  const posts = await Post.findAll({
+  const posts = await Posts.findAll({
     order: [["createdAt", "DESC"]],
     attributes: [
       "postId",

@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { Comment } = require("../models");
+const { Comments } = require("../models");
 
 router.post("/comment", async (req, res, next) => {
-  const { content, author } = req.body;
+  const { content, author, postId } = req.body;
 
   try {
-    const comment = await Comment.create({ content, author });
+    console.log(content, author, postId);
+    const comment = await Comments.create({ content, author, postId });
     res.status(201).json({ data: comment });
   } catch (e) {
     console.log("💀", e);
@@ -23,7 +24,7 @@ router.param(
   async (req, res, next, id) => {
     try {
       const idnum = Number(id);
-      const comment = await Comment.findOne({
+      const comment = await Comments.findOne({
         where: { commentId: idnum },
       });
 
@@ -43,7 +44,7 @@ router.param(
 );
 
 router.get("/comment", async (req, res) => {
-  const comments = await Comment.findAll({
+  const comments = await Comments.findAll({
     order: [["createdAt", "DESC"]],
     attributes: ["commentId", "content", "author", "createdAt", "updatedAt"],
   });

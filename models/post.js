@@ -8,18 +8,18 @@ module.exports =
    * @returns {Model} Post Model
    */
   (sequelize, DataTypes) => {
-    class Post extends Model {
+    class Posts extends Model {
       /**
        * Helper method for defining associations.
        * This method is not a part of Sequelize lifecycle.
        * The `models/index` file will call this method automatically.
        */
       static associate(models) {
-        // define association here
+        this.hasMany(models.Comments);
         /// TODO - author를 User에 대한 FK로 변경
       }
     }
-    Post.init(
+    Posts.init(
       {
         postId: {
           allowNull: false,
@@ -52,8 +52,8 @@ module.exports =
       },
       {
         sequelize,
-        modelName: "Post",
+        modelName: "Posts",
       }
     );
-    return Post;
+    return Posts;
   };

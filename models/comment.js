@@ -1,7 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Comment extends Model {
+  class Comments extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -10,9 +10,10 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       /// TODO - author를 User에 대한 FK로 변경
+      this.belongsTo(models.Posts);
     }
   }
-  Comment.init(
+  Comments.init(
     {
       commentId: {
         allowNull: false,
@@ -38,11 +39,23 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
+      postId: {
+        /**
+         * new column
+         */
+        allowNull: false,
+        type: DataTypes.INTEGER,
+        references: {
+          model: "Posts",
+          key: "postId",
+        },
+        onDelete: "CASCADE",
+      },
     },
     {
       sequelize,
-      modelName: "Comment",
+      modelName: "Comments",
     }
   );
-  return Comment;
+  return Comments;
 };
