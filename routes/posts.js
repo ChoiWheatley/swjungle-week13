@@ -58,7 +58,9 @@ router.get("/post/:postId/comment", async (req, res) => {
   /**
    * 해당 post가 가지고 있는 comment들을 모두 쿼리한다.
    */
-  res.json({ data: await req.post.getComments() });
+  res.json({
+    data: await req.post.getComments({ order: [["createdAt", "DESC"]] }),
+  });
 });
 
 router.delete("/post/:postId", async (req, res) => {
