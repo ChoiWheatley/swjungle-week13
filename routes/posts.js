@@ -59,4 +59,20 @@ router.delete("/post/:postId", async (req, res) => {
   res.sendStatus(200);
 });
 
+router.put("/post/:postId", async (req, res) => {
+  /**
+   * PUT /post/1
+   * {"title": "something", "content": "good"}
+   */
+  const { title, content } = req.body;
+
+  req.post.set({
+    title,
+    content,
+  });
+  await req.post.save();
+
+  res.sendStatus(200);
+});
+
 module.exports = router;
