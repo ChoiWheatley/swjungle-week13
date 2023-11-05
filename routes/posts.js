@@ -66,10 +66,15 @@ router.put("/post/:postId", async (req, res) => {
    */
   const { title, content } = req.body;
 
-  req.post.set({
-    title,
-    content,
-  });
+  if (title) {
+    req.post.title = title;
+  }
+
+  if (content) {
+    req.post.content = content;
+  }
+
+  ///FIXME - `save` 단에서 form 검사를 수행할 수 있는 방법 찾기
   await req.post.save();
 
   res.sendStatus(200);
