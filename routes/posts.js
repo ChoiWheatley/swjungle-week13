@@ -2,12 +2,14 @@ const express = require("express");
 const router = express.Router();
 const { Posts } = require("../models");
 const { Comments } = require("../models");
+const authenticateToken = require("./authenticateToken");
 
-router.post("/post", async (req, res, next) => {
-  const { title, content, author } = req.body;
+router.post("/post", [authenticateToken], async (req, res, next) => {
+  const { title, content } = req.body;
+  const userId = req.user.userId;
 
   try {
-    const post = await Posts.create({ title, content, author });
+    const post = await Posts.create({ title, content, userId });
     res.status(201).json({ data: post });
   } catch (e) {
     console.log("💀", e);
@@ -68,16 +70,26 @@ router.get("/post/:postId/comment", async (req, res) => {
   });
 });
 
-router.delete("/post/:postId", async (req, res) => {
+router.delete("/post/:postId", [authenticateToken], async (req, res) => {
+  if (req.user.userId !== req.post.userId) {
+    return res
+      .status(403)
+      .json({ errorMessage: "글쓴이만 수정할 수 있습니다..." });
+  }
   await req.post.destroy();
   res.sendStatus(200);
 });
 
-router.put("/post/:postId", async (req, res) => {
+router.put("/post/:postId", [authenticateToken], async (req, res) => {
   /**
    * PUT /post/1
    * {"title": "something", "content": "good"}
    */
+  if (req.user.userId !== req.post.userId) {
+    return res
+      .status(403)
+      .json({ errorMessage: "글쓴이만 수정할 수 있습니다..." });
+  }
   const { title, content } = req.body;
 
   if (title) {
