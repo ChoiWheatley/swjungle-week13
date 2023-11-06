@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Users } = require("../models");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 router.post("/signup", async (req, res, next) => {
   const { nickname, password, passwordConfirm } = req.body;
@@ -64,7 +65,7 @@ router.post("/login", async (req, res) => {
   // 사용자 정보를 JWT로 생성
   const userJWT = jwt.sign(
     user.toJSON(),
-    "secretOrPrivateKey", /// TODO - secret key .env 파일에 저장하여 꺼내쓰기
+    process.env["SECRET_KEY"], /// TODO - secret key .env 파일에 저장하여 꺼내쓰기
     { expiresIn: "1h" } // JWT의 인증 만료시간을 1시간으로 설정 /// TODO - refresh token + expiresIn: 15min
   );
 
@@ -84,7 +85,7 @@ router.get("/testjwt", (req, res) => {
     return res.status(404).json({ errorMessage: "토큰이 없습니다~" });
   }
   try {
-    const payload = jwt.verify(token.split(" ")[1], "secretOrPrivateKey");
+    const payload = jwt.verify(token.split(" ")[1], process.env["SECRET_KEY"]);
     return res.json({ data: payload });
   } catch (e) {
     console.log("💀", e);

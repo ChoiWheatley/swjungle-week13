@@ -3,6 +3,7 @@ const commentsRouter = require("./routes/comments");
 const postsRouter = require("./routes/posts");
 const usersRouter = require("./routes/users");
 const cookieParser = require("cookie-parser");
+require("dotenv").config();
 
 const app = express();
 const port = 3000;
