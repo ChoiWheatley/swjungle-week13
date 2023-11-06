@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Posts } = require("../models");
+const { Comments } = require("../models");
 
 router.post("/post", async (req, res, next) => {
   const { title, content, author } = req.body;
@@ -19,6 +20,10 @@ router.param("postId", async (req, res, next, id) => {
     const idnum = Number(id);
     const post = await Posts.findOne({
       where: { postId: idnum },
+      include: {
+        model: Comments,
+      },
+      order: [[Comments, "createdAt", "DESC"]],
     });
 
     if (post === null) {
@@ -38,14 +43,14 @@ router.param("postId", async (req, res, next, id) => {
 router.get("/post", async (req, res) => {
   const posts = await Posts.findAll({
     order: [["createdAt", "DESC"]],
-    attributes: [
-      "postId",
-      "title",
-      "content",
-      "author",
-      "createdAt",
-      "updatedAt",
-    ],
+    // attributes: [
+    //   "postId",
+    //   "title",
+    //   "content",
+    //   "author",
+    //   "createdAt",
+    //   "updatedAt",
+    // ],
   });
   res.json({ data: posts });
 });
