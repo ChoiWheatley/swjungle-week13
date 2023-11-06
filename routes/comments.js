@@ -1,13 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const { Comments } = require("../models");
+const authenticateToken = require("./authenticateToken");
 
-router.post("/comment", async (req, res, next) => {
-  const { content, author, postId } = req.body;
+router.post("/comment", [authenticateToken], async (req, res, next) => {
+  const { content, postId } = req.body;
+  const userId = req.user.userId;
 
   try {
-    console.log(content, author, postId);
-    const comment = await Comments.create({ content, author, postId });
+    console.log(content, postId);
+    const comment = await Comments.create({ content, postId, userId });
     res.status(201).json({ data: comment });
   } catch (e) {
     console.log("💀", e);
@@ -46,7 +48,6 @@ router.param(
 router.get("/comment", async (req, res) => {
   const comments = await Comments.findAll({
     order: [["createdAt", "DESC"]],
-    attributes: ["commentId", "content", "author", "createdAt", "updatedAt"],
   });
   res.json({ data: comments });
 });
@@ -55,16 +56,26 @@ router.get("/comment/:commentId", async (req, res) => {
   res.json({ data: req.comment });
 });
 
-router.delete("/comment/:commentId", async (req, res) => {
+router.delete("/comment/:commentId", [authenticateToken], async (req, res) => {
+  if (req.user.userId !== req.comment.userId) {
+    return res
+      .status(403)
+      .json({ errorMessage: "글쓴이만 수정할 수 있습니다..." });
+  }
   await req.comment.destroy();
   res.sendStatus(200);
 });
 
-router.put("/comment/:commentId", async (req, res) => {
+router.put("/comment/:commentId", [authenticateToken], async (req, res) => {
   /**
    * PUT /comment/1
    * {"content": "good"}
    */
+  if (req.user.userId !== req.comment.userId) {
+    return res
+      .status(403)
+      .json({ errorMessage: "글쓴이만 수정할 수 있습니다..." });
+  }
   const { content } = req.body;
 
   if (content) {
