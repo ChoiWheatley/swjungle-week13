@@ -19,7 +19,10 @@ module.exports =
           sourceKey: "postId",
           foreignKey: "PostId",
         });
-        /// TODO - author를 User에 대한 FK로 변경
+        this.belongsTo(models.Users, {
+          targetKey: "userId",
+          foreignKey: "UserId",
+        });
       }
     }
     Posts.init(
@@ -38,10 +41,6 @@ module.exports =
           allowNull: false,
           type: DataTypes.TEXT,
         },
-        author: {
-          allowNull: false,
-          type: DataTypes.STRING,
-        },
         createdAt: {
           allowNull: false,
           type: DataTypes.DATE,
@@ -51,6 +50,15 @@ module.exports =
           allowNull: false,
           type: DataTypes.DATE,
           defaultValue: DataTypes.NOW,
+        },
+        userId: {
+          allowNull: false,
+          type: DataTypes.INTEGER,
+          references: {
+            model: "Users",
+            key: "userId",
+          },
+          onDelete: "CASCADE",
         },
       },
       {

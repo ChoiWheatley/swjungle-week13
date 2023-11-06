@@ -11,7 +11,7 @@ app.get("/", (_req, res) => {
   res.send("Hello, World!");
 });
 
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log("[*] ", port, "포트로 서버가 열렸어요! ️💗");
 });
 

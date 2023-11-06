@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
         targetKey: "postId",
         foreignKey: "PostId",
       });
+      this.belongsTo(models.Users, {
+        targetKey: "userId",
+        foreignKey: "UserId",
+      });
     }
   }
   Comments.init(
@@ -25,10 +29,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
       },
       content: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      author: {
         allowNull: false,
         type: DataTypes.STRING,
       },
@@ -51,6 +51,15 @@ module.exports = (sequelize, DataTypes) => {
         references: {
           model: "Posts",
           key: "postId",
+        },
+        onDelete: "CASCADE",
+      },
+      userId: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+        references: {
+          model: "Users",
+          key: "userId",
         },
         onDelete: "CASCADE",
       },
