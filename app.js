@@ -2,6 +2,7 @@ const express = require("express");
 const commentsRouter = require("./routes/comments");
 const postsRouter = require("./routes/posts");
 const usersRouter = require("./routes/users");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 const port = 3000;
@@ -16,6 +17,7 @@ app.listen(port, () => {
 
 /// SECTION - Middlewares
 
+app.use(cookieParser());
 app.use(express.json()); // use builtin JSON parser middleware
 app.use("/api", [commentsRouter, postsRouter, usersRouter]);
 app.use(express.static("static"));
