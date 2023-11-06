@@ -63,14 +63,25 @@ router.post("/login", async (req, res) => {
   }
 
   // 사용자 정보를 JWT로 생성
-  const userJWT = jwt.sign(
-    user.toJSON(),
-    process.env["SECRET_KEY"], /// TODO - secret key .env 파일에 저장하여 꺼내쓰기
-    { expiresIn: "1h" } // JWT의 인증 만료시간을 1시간으로 설정 /// TODO - refresh token + expiresIn: 15min
+  const accessToken = jwt.sign(
+    {
+      tokenType: "access",
+      userId: user.userId
+    },
+    process.env["SECRET_KEY"],
+    { expiresIn: "15m" }
+  );
+  const refreshToken = jwt.sign(
+    {
+      tokenType: "refresh",
+      userId: user.userId
+    },
+    process.env["SECRET_KEY"],
+    { expiresIn: "15m" }
   );
 
-  res.setHeader("Authorization", `Bearer ${userJWT}`);
-  return res.status(200).end();
+  res.setHeader("Authorization", `Bearer ${accessToken}`);
+  return res.status(200).json({ accessToken, refreshToken });
 });
 
 router.post("/logout", (req, res) => {

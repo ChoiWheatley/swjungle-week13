@@ -2,6 +2,7 @@ const express = require("express");
 const commentsRouter = require("./routes/comments");
 const postsRouter = require("./routes/posts");
 const usersRouter = require("./routes/users");
+const refreshRouter = require("./routes/refreshToken");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
@@ -20,7 +21,7 @@ app.listen(port, async () => {
 
 app.use(cookieParser());
 app.use(express.json()); // use builtin JSON parser middleware
-app.use("/api", [commentsRouter, postsRouter, usersRouter]);
+app.use("/api", [commentsRouter, postsRouter, usersRouter, refreshRouter]);
 app.use(express.static("static"));
 
 /// !SECTION - Middlewares
