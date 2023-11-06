@@ -29,9 +29,10 @@ router.post("/signup", async (req, res, next) => {
         "💀 닉네임은 최소 3자 이상, 알파벳 대소문자, 숫자로 구성되어야 합니다.",
     });
   }
-  if (await Users.findOne({ nickname: nickname })) {
+  const user = await Users.findOne({ where: { nickname: nickname } });
+  if (user) {
     return res.status(400).json({
-      errorMessage: "💀 중복된 닉네임입니다~",
+      errorMessage: `💀 중복된 닉네임입니다~(${user.nickname})`,
     });
   }
 
@@ -75,6 +76,21 @@ router.post("/login", async (req, res) => {
 router.post("/logout", (req, res) => {
   res.clearCookie("sparta");
   res.sendStatus(200);
+});
+
+router.get("/testjwt", (req, res) => {
+  const token = req.cookies.sparta;
+  console.log(token);
+  if (!token) {
+    return res.status(404).json({ errorMessage: "토큰이 없습니다~" });
+  }
+  try {
+    const payload = jwt.verify(token.split(" ")[1], "secretOrPrivateKey");
+    return res.json({ data: payload });
+  } catch (e) {
+    console.log("💀", e);
+    return res.sendStatus(403);
+  }
 });
 
 module.exports = router;
