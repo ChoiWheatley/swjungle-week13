@@ -68,18 +68,17 @@ router.post("/login", async (req, res) => {
     { expiresIn: "1h" } // JWT의 인증 만료시간을 1시간으로 설정 /// TODO - refresh token + expiresIn: 15min
   );
 
-  // userJWT 변수를 sparta 라는 이름을 가진 쿠키에 Bearer 토큰 형식으로 할당
-  res.cookie("sparta", `Bearer ${userJWT}`);
+  res.setHeader("Authorization", `Bearer ${userJWT}`);
   return res.status(200).end();
 });
 
 router.post("/logout", (req, res) => {
-  res.clearCookie("sparta");
+  // now this behavior do nothing. Access token will expire on client
   res.sendStatus(200);
 });
 
 router.get("/testjwt", (req, res) => {
-  const token = req.cookies.sparta;
+  const token = req.headers.authorization;
   console.log(token);
   if (!token) {
     return res.status(404).json({ errorMessage: "토큰이 없습니다~" });
