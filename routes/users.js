@@ -95,7 +95,11 @@ router.post("/logout", (req, res) => {
   // now this behavior do nothing. Access token will expire on client
   const accessToken = req.headers["authorization"];
   if (accessToken) {
-    BlackLists.create({ accessToken: accessToken.split(" ")[1] });
+    const token = accessToken.split(" ")[1];
+    const found = BlackLists.findOne({ where: { accessToken: token } })
+    if (!found) {
+      BlackLists.create({ accessToken: token });
+    }
   }
   res.sendStatus(200);
 });
