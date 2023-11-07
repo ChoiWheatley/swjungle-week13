@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+const { BlackLists } = require("../models");
 require("dotenv").config();
 
 /**
@@ -13,7 +14,15 @@ router.post("/token/refresh", async (req, res) => {
     return res.sendStatus(401); // no token provided
   }
 
-  /// TODO - 기존 토큰들을 무효화한다.
+  /// 기존 토큰을 무효화한다.
+  const oldToken = req.headers["authorization"];
+  if (oldToken) {
+    const accessToken = oldToken.split(" ")[1];
+    const blacklist = await BlackLists.findOne({ accessToken });
+    if (!blacklist) {
+      await BlackLists.create({ accessToken });
+    }
+  }
 
   jwt.verify(refreshToken, process.env["SECRET_KEY"], (err, payload) => {
     if (err) {

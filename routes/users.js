@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Users } = require("../models");
+const { BlackLists } = require("../models");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
@@ -62,6 +63,12 @@ router.post("/login", async (req, res) => {
       .json({ errorMessage: "비밀번호가 일치하지 않습니다." });
   }
 
+  // 기존 access token을 비활성화한다. [optional]
+  const oldAccessToken = req.headers["authorization"];
+  if (oldAccessToken) {
+    BlackLists.create({ accessToken: oldAccessToken.split(" ")[1] });
+  }
+
   // 사용자 정보를 JWT로 생성
   const accessToken = jwt.sign(
     {
@@ -86,6 +93,10 @@ router.post("/login", async (req, res) => {
 
 router.post("/logout", (req, res) => {
   // now this behavior do nothing. Access token will expire on client
+  const accessToken = req.headers["authorization"];
+  if (accessToken) {
+    BlackLists.create({ accessToken: accessToken.split(" ")[1] });
+  }
   res.sendStatus(200);
 });
 
